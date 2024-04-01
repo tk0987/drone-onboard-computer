@@ -49,10 +49,6 @@ class motion_data:
         return (accx*self.dt*self.dt,accy*self.dt*self.dt,accz*self.dt*self.dt)
     @property
     def decode_acc(self,pos_x,pos_y,pos_z,accx,accy,accz):#those are actual orientations of gyro, not base, as well as accelerations
-        # normal g-accand_accel schould be antiparallel to the "normal-to-plane vector", given by gyro data. So, there is 
-        # a way to 'disentangle' motion-accels from g-accel - this way (maybe not the best)
-        
-        # so, one diagonal divided by the longest. plus 90 deg - or pi/2. As g-accel is always downwards
         g=9.8105
         # rotation vec now... rotvec=[sin(pos_z)*cos(pos_y),sin(pos_x)*cos(pos_z),sin(pos_y)*cos(pos_x)]
         x=math.sin(pos_z)*math.cos(pos_y) # nice symmetry. obtained by writing all 3 equations for all 3 possible rotations - then multiplying each one
