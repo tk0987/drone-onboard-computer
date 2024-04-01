@@ -7,3 +7,5 @@ Currently only one class for motion processing is quite ready (as i started yest
 Another class will drive servos and motors. Another - responsible for communication.
 
 main code on pi pico will process and acquire all data needed
+
+all in micropython.
