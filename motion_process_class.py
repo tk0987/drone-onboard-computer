@@ -55,7 +55,7 @@ class motion_data:
         y=math.sin(pos_x)*math.cos(pos_z)
         z=math.sin(pos_y)*math.cos(pos_x)
 
-        gx=g*x # maybe wrong, i'll test
+        gx=g*x # maybe wrong, i'll test. 03.06.24: it is fine
         gy=g*y
         gz=g*z
         return (accx-gx,accy-gy,accz-gz) # and we have drone accels!
