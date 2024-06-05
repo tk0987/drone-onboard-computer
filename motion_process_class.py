@@ -5,6 +5,9 @@ This class is quite general, so it does not matter"""
 import math
 class motion_data:
     def __init__(self,pressure_pa,base_pressure,timestep,acc_x,acc_y,acc_z,posi_x,posi_y,posi_z):
+        self.servo_freq=50
+        self.servo_duty_base=0.075
+
         self.temp_x=0.0
         self.temp_y=0.0
         self.temp_z=0.0
@@ -62,7 +65,29 @@ class motion_data:
     
     def decode_pos(self,pos_x,pos_y,pos_z): # for obtaining actual position! main code needs treshold, as gyro is floating plus-minus 2% of 360 [deg/s]
         # yeah, gyro gives data in [deg/s], so it detects change only. hence, to obtain actual position - just a simple numerical integration of data
+        self.prev_x=self.temp_x
+        self.prev_y=self.temp_y
+        self.prev_z=self.temp_z
         self.temp_x+=pos_x*self.dt
         self.temp_y+=pos_y*self.dt
         self.temp_z+=pos_z*self.dt
+        
         return [self.temp_x,self.temp_y,self.temp_z]
+    def servo_stabilise_Y(self,pos_y):
+         # rotation along x axis. those exponentials are arbitrary currently. maybe another function will fit better
+        if self.prev_y-pos_y<0:
+            return [(1.5+0.5*(1-math.exp(-(self.prev_y-pos_y))))/20.0,(1.5-0.5*(1-math.exp(-(self.prev_y-pos_y))))/20.0] # [right servo duty, left servo duty]
+        else: 
+            return [(1.5-0.5*(1-math.exp(-(self.prev_y-pos_y))))/20.0,(1.5+0.5*(1-math.exp(-(self.prev_y-pos_y))))/20.0] # servos working in the opposite directions ;)
+    def servo_stabilise_x(self,pos_x):
+         # rotation along x axis
+        if self.prev_z-pos_x<0:
+            return [(1.5-0.5*(1-math.exp(-(self.prev_y-pos_x))))/20.0,(1.5-0.5*(1-math.exp(-(self.prev_y-pos_x))))/20.0] #both  servos should work in the same direction
+        else: 
+            return [(1.5+0.5*(1-math.exp(-(self.prev_y-pos_x))))/20.0,(1.5+0.5*(1-math.exp(-(self.prev_y-pos_x))))/20.0]
+    def motor_stabilise_Z(self,pos_z): # i'll use those micro dc motors taht sucks
+        if self.prev_z-pos_z<0:
+            
+            return []  # to be continued
+
+            
