@@ -14,17 +14,17 @@ class MotionData:
         self.dt = timestep
 
         # Correct accelerations to make unit vector approximately 1.0
-        self.accel_corr_factor = (1 - math.sqrt(acc_x ** 2 + acc_y ** 2 + acc_z ** 2))
+        self.accel_corr_factor = abs(1 - math.sqrt(acc_x ** 2 + acc_y ** 2 + acc_z ** 2))
         self.ax = acc_x * 9.8105 / self.accel_corr_factor
         self.ay = acc_y * 9.8105 / self.accel_corr_factor
         self.az = acc_z * 9.8105 / self.accel_corr_factor
 
         # Convert positions from radians to degrees
-        if posi_x>5:
-        	self.pos_x = posi_x / (2 * math.pi) * 360.0
-		if posi_y>5:
+        if posi_x>5/(2 * math.pi) * 360.0:
+        	self.pos_x = posi_x / (2 * math.pi) * 360
+        if posi_y>5/(2 * math.pi) * 360.0:
         	self.pos_y = posi_y / (2 * math.pi) * 360.0
-        if posi_z>5:
+        if posi_z>5/(2 * math.pi) * 360.0:
         	self.pos_z = posi_z / (2 * math.pi) * 360.0
         self.corr_pos = math.sqrt(posi_x ** 2 + posi_y ** 2 + posi_z ** 2)
 
@@ -79,22 +79,22 @@ class MotionData:
         Stabilize rotation along Y-axis.
         """
         if self.prev_y - pos_y < 0:
-            return [(1.5 + 0.5 * (1 - math.exp(-(self.prev_y - pos_y)))),
+            return [(1.5 - 0.5 * (1 - math.exp(-(self.prev_y - pos_y)))),
                     (1.5 - 0.5 * (1 - math.exp(-(self.prev_y - pos_y))))]
         else:
-            return [(1.5 - 0.5 * (1 - math.exp(-(self.prev_y - pos_y)))),
+            return [(1.5 + 0.5 * (1 - math.exp(-(self.prev_y - pos_y)))),
                     (1.5 + 0.5 * (1 - math.exp(-(self.prev_y - pos_y))))]
 
-    def servo_stabilise_x(self, pos_z):
+    def servo_stabilise_Z(self, pos_z):
         """
-        Stabilize rotation along X-axis.
+        Stabilize rotation along Z-axis.
         """
         if self.prev_z - pos_z < 0:
             return [(1.5 - 0.5 * (1 - math.exp(-(self.prev_z - pos_z)))),
-                    (1.5 - 0.5 * (1 - math.exp(-(self.prev_z - pos_z))))]
+                    (1.5 +0.5 * (1 - math.exp(-(self.prev_z - pos_z))))]
         else:
             return [(1.5 + 0.5 * (1 - math.exp(-(self.prev_z - pos_z)))),
-                    (1.5 + 0.5 * (1 - math.exp(-(self.prev_z - pos_z))))]
+                    (1.5 - 0.5 * (1 - math.exp(-(self.prev_z - pos_z))))]
 
     def motor_stabilise_X(self, pos_x):
         """
@@ -109,37 +109,37 @@ class MotionData:
                     duty * (1 - math.exp(-(self.prev_x - pos_x)))]
 
     @property
-    def upwards(self):
+    def upwards(self,signal_up):
         duty = 100
-        return duty * self.signal_up
+        return duty *signal_up
 
-    @property
-    def downwards(self):
+#8    @property
+    def downwards(self,signal_down):
         duty = 100
-        return duty / self.signal_down
+        return duty / signal_down
 
-    @property
-    def straight(self):
+#    @property
+    def straight(self,signal_straight):
         duty = 100
         servo = 2
-        return [duty * self.signal_straight, servo]
+        return [duty *signal_straight, servo]
 
-    @property
-    def backwards(self):
+#    @property
+    def backwards(self,signal_back):
         duty = 100
         servo = 1
-        return [duty / self.signal_back, servo]
+        return [duty /signal_back, servo]
 
-    @property
-    def rotate_l(self):
+  #  @property
+    def rotate_l(self,signal_l):
         duty = 100
         servo1 = 1.25
         servo2 = 1.75
-        return [duty * self.signal_l, servo1, servo2]
+        return [duty * signal_l, servo1, servo2]
 
-    @property
-    def rotate_r(self):
+    #@property
+    def rotate_r(self,signal_r):
         duty = 100
         servo1 = 1.75
         servo2 = 1.25
-        return [duty * self.signal_r, servo1, servo2]
+        return [duty * signal_r, servo1, servo2]
