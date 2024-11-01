@@ -4,7 +4,7 @@ Still creating. Drone will have 2 servos, 2 motors, rpi pico (one on drone, one 
 
 Currently only one class for motion processing is quite ready (as i started yesterday).
 
-Another class will drive servos and motors. Another - responsible for communication. Classes driving sensors are available on github.
+. Another - responsible for communication. Classes driving sensors are available on github.
 
 main code on pi pico will process and acquire all data needed
 
