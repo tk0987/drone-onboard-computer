@@ -118,21 +118,21 @@ class MotionData:
         """
         if self.prev_y - pos_y < 0:
             return [(1.5 + 0.5 * (1 - math.exp(-(self.prev_y - pos_y)))),
-                    (1.5 - 0.5 * (1 - math.exp(-(self.prev_y - pos_y))))]
+                    (1.5 +0.5 * (1 - math.exp(-(self.prev_y - pos_y))))]
         else:
             return [(1.5 - 0.5 * (1 - math.exp(-(self.prev_y - pos_y)))),
-                    (1.5 + 0.5 * (1 - math.exp(-(self.prev_y - pos_y))))]
+                    (1.5 - 0.5 * (1 - math.exp(-(self.prev_y - pos_y))))]
 
-    def servo_stabilise_x(self, pos_z):
+    def servo_stabilise_Z(self, pos_z):
         """
-        Stabilize rotation along X-axis.
+        Stabilize rotation along Z-axis.
         """
         if self.prev_z - pos_z < 0:
             return [(1.5 - 0.5 * (1 - math.exp(-(self.prev_z - pos_z)))),
-                    (1.5 - 0.5 * (1 - math.exp(-(self.prev_z - pos_z))))]
+                    (1.5 + 0.5 * (1 - math.exp(-(self.prev_z - pos_z))))]
         else:
             return [(1.5 + 0.5 * (1 - math.exp(-(self.prev_z - pos_z)))),
-                    (1.5 + 0.5 * (1 - math.exp(-(self.prev_z - pos_z))))]
+                    (1.5 - 0.5 * (1 - math.exp(-(self.prev_z - pos_z))))]
 
     def motor_stabilise_X(self, pos_x):
         """
@@ -141,10 +141,10 @@ class MotionData:
         duty = 100
         if self.prev_x - pos_x < 0:
             return [duty * (1 + math.exp(-(self.prev_x - pos_x))),
-                    duty * (1 + math.exp(-(self.prev_x - pos_x)))]
+                    duty * (1 - math.exp(-(self.prev_x - pos_x)))]
         else:
             return [duty * (1 - math.exp(-(self.prev_x - pos_x))),
-                    duty * (1 - math.exp(-(self.prev_x - pos_x)))]
+                    duty * (1 + math.exp(-(self.prev_x - pos_x)))]
     def decode_acc(self,pos_x,pos_y,pos_z,accx,accy,accz):#those are actual orientations of gyro, not base, as well as accelerations
         g=9.8105
         # rotation vec now... rotvec=[sin(pos_z)*cos(pos_y),sin(pos_x)*cos(pos_z),sin(pos_y)*cos(pos_x)]
@@ -168,33 +168,33 @@ class MotionData:
         self.temp_z=yaw
         
         return [self.temp_x,self.temp_y,self.temp_z]
-    #@property
+    @property
     def upwards(self,signal_up):
     	duty=100
     	return duty*signal_up
-    #@property
-    def downwards(self,signal_down):
-	duty=100
-	return duty/signal_down
-	#@property
-    def straight(self,signal_straight):
-	duty=100
-	servo=2
-	return [duty*signal_straight,servo]
-	#@property
-    def backwards(self,signal_back):
-	duty=100
-	servo=1
-	return [duty/signal_back,servo]
-	#@property
-    def rotate_l(self, signal_l):
-	duty=100
-	servo1=1.25
-	servo2=1.75
-	return [duty*signal_l,servo1,servo2]
-	#@property
-    def rotate_r(self,signal_r):
-	duty=100
-	servo1=1.75
-	servo2=1.25
-	return [duty*signal_l,servo1,servo2]
+    @property
+	def downwards(self,signal_down):
+		duty=100
+		return duty/signal_down
+	@property
+	def straight(self,signal_straight):
+		duty=100
+		servo=2
+		return [duty*signal_straight,servo]
+	@property
+	def backwards(self,signal_back):
+		duty=100
+		servo=1
+		return [duty/signal_back,servo]
+	@property
+	def rotate_l(self, signal_l):
+		duty=100
+		servo1=1.25
+		servo2=1.75
+		return [duty*signal_l,servo1,servo2]
+	@property
+	def rotate_r(self,signal_r):
+		duty=100
+		servo1=1.75
+		servo2=1.25
+		return [duty*signal_l,servo1,servo2]
